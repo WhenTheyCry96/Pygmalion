@@ -3,6 +3,7 @@
 #include <cstdlib>
 #include <cmath>
 #include <ctime>
+#include <conio.h>
 #include <windows.h>
 
 #define PI 3.14159265
@@ -23,6 +24,7 @@ public:
 	Point(float _x, float _y, float _z) :
 		x(_x), y(_y), z(_z)
 	{ }
+	void extenPoint(float extension);
 };
 
 class Line {

@@ -1,8 +1,17 @@
 #include "geo.h"
 
+void Point::extenPoint(float extension) {
+	this->x = this->x * extension;
+	this->y = this->y * extension;
+	this->z = this->z * extension;
+
+	return;
+}
+
 inline void dot(GLbyte* data, int x, int y, int value) {
 	int _x = x + WIDTH / 2;
 	int _y = y + HEIGHT / 2;
+
 	if (_x >= 0 && _x < WIDTH && _y >= 0 && _y < HEIGHT) {
 		data[_y * WIDTH + _x] = value;
 	}

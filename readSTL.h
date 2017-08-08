@@ -7,4 +7,4 @@
 
 float parseFloat(std::ifstream& file);
 Point parsePoint(std::ifstream& file);
-Line* parseSTL(const std::string filename, unsigned int& _num);
+Line* parseSTL(const std::string filename, unsigned int& _numm, float extension);

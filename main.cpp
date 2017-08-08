@@ -1,7 +1,11 @@
 #include "makeBMP.h"
 #include "readSTL.h"
 #include "geo.h"
+#include "opencv2/opencv.hpp"
+#include "opencv2/core/core.hpp"
+#include "opencv2/highgui/highgui.hpp"
 
+using namespace cv;
 using namespace std;
 
 GLbyte data[HEIGHT * WIDTH];
@@ -68,10 +72,11 @@ int main() {
 	//	//Sleep(1000);
 	//}
 
-	string filename("testcube.stl");
+	string filename("testcubehole.stl");
 	Line* line;
 	unsigned int trigleNum;
-	line = parseSTL(filename, trigleNum);
+	float extension = 20;
+	line = parseSTL(filename, trigleNum, extension);
 
 	int linenum = trigleNum * 3;
 
@@ -87,6 +92,9 @@ int main() {
 	float maty[3][3] = { { cos(degy * Deg2Rad), 0, sin(degy * Deg2Rad) },
 						{ 0, 1, 0 },
 						{ -sin(degy * Deg2Rad), 0, cos(degy * Deg2Rad) } };
+	Mat img;
+	namedWindow("testImage");
+
 	int chk = 0;
 	while (true) {
 		for (int i = 0; i < linenum; i++) {
@@ -97,6 +105,15 @@ int main() {
 
 		StoreIMG(::data, WIDTH, HEIGHT);
 
+		img = imread("IMG.bmp", CV_LOAD_IMAGE_UNCHANGED);
+		if (!img.data) {
+			cerr << "imread error" << endl;
+			assert(false);
+		}
+
+		imshow("testImage", img);
+		waitKey(1000 / 600);
+
 		for (int i = 0; i < linenum; i++) {
 			drawLine(::data, line[i], 0);
 		}
@@ -106,9 +123,25 @@ int main() {
 		//}
 
 		if(chk++ % 120 == 0) printf("%d ", clock());
-
 		//Sleep(200);
+		//break;
 	}
+
+	//Mat mat;// = Mat(512, 512, CV_8UC1);
+	//mat = imread("lena512.bmp");
+	//imwrite("lena512cv.bmp", mat);
+
+	//if (!mat.data) {
+	//	cerr << "imread error" << endl;
+	//	assert(false);
+	//}
+
+	//namedWindow("testImage");
+
+	//imshow("testImage", mat);
+	//waitKey(0);
+
+	//destroyWindow("test Image");
 
 	return 0;
 }

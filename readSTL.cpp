@@ -16,7 +16,7 @@ Point parsePoint(std::ifstream& file) {
 	return Point(x, y, z);
 }
 
-Line* parseSTL(const string filename, unsigned int& _num) {
+Line* parseSTL(const string filename, unsigned int& _num, float extension) {
 	ifstream fileSTL(filename.c_str(), ios::in | ios::binary);
 	if (!fileSTL) {
 		cerr << "open stl file error" << endl;
@@ -42,6 +42,11 @@ Line* parseSTL(const string filename, unsigned int& _num) {
 		Point v1 = parsePoint(fileSTL);
 		Point v2 = parsePoint(fileSTL);
 		Point v3 = parsePoint(fileSTL);
+
+		v1.extenPoint(extension);
+		v2.extenPoint(extension);
+		v3.extenPoint(extension);
+
 		//cout << v1.x << " " << v1.y << " " << v1.z << " " << endl;
 		//cout << v2.x << " " << v2.y << " " << v2.z << " " << endl;
 		//cout << v3.x << " " << v3.y << " " << v3.z << " " << endl;

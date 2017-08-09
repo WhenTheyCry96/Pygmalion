@@ -38,16 +38,16 @@ int main() {
 	//	line[i / 3] = Line(P1, P2);
 	//}
 
-	//float degx = 3;
-	//float degy = 0;
-	//float degz = 0;
-	//float matx[3][3] = { { 1, 0, 0 },
+	//double degx = 3;
+	//double degy = 0;
+	//double degz = 0;
+	//double matx[3][3] = { { 1, 0, 0 },
 	//					{ 0, cos(degx * Deg2Rad), -sin(degx * Deg2Rad) },
 	//					{ 0, sin(degx * Deg2Rad), cos(degx * Deg2Rad) } };
-	//float matz[3][3] = { {cos(degz * Deg2Rad), -sin(degz * Deg2Rad), 0 },
+	//double matz[3][3] = { {cos(degz * Deg2Rad), -sin(degz * Deg2Rad), 0 },
 	//					{ sin(degz * Deg2Rad),  cos(degz * Deg2Rad), 0 },
 	//					{0, 0, 1} };
-	//float maty[3][3] = { { cos(degy * Deg2Rad), 0, sin(degy * Deg2Rad) },
+	//double maty[3][3] = { { cos(degy * Deg2Rad), 0, sin(degy * Deg2Rad) },
 	//					{ 0, 1, 0 },
 	//					{ -sin(degy * Deg2Rad), 0, cos(degy * Deg2Rad) } };
 	//int chk = 0;
@@ -72,19 +72,19 @@ int main() {
 	string filename("testcube.stl");
 	geo::Obj* obj;
 	unsigned int trigleNum;
-	float extension = 1;
+	double extension = 1;
 	obj = parseSTL2Obj(filename, trigleNum, extension);
 
-	float degx = 3;
-	float degy = 3;
-	float degz = 3;
-	float matx[3][3] = { { 1, 0, 0 },
+	double degx = 3;
+	double degy = 3;
+	double degz = 3;
+	double matx[3][3] = { { 1, 0, 0 },
 						{ 0, cos(degx * Deg2Rad), -sin(degx * Deg2Rad) },
 						{ 0, sin(degx * Deg2Rad), cos(degx * Deg2Rad) } };
-	float matz[3][3] = { { cos(degz * Deg2Rad), -sin(degz * Deg2Rad), 0 },
+	double matz[3][3] = { { cos(degz * Deg2Rad), -sin(degz * Deg2Rad), 0 },
 						{ sin(degz * Deg2Rad),  cos(degz * Deg2Rad), 0 },
 						{ 0, 0, 1 } };
-	float maty[3][3] = { { cos(degy * Deg2Rad), 0, sin(degy * Deg2Rad) },
+	double maty[3][3] = { { cos(degy * Deg2Rad), 0, sin(degy * Deg2Rad) },
 						{ 0, 1, 0 },
 						{ -sin(degy * Deg2Rad), 0, cos(degy * Deg2Rad) } };
 
@@ -96,7 +96,7 @@ int main() {
 		assert(false);
 	}
 
-	geo::Point P(12.153, 120.153, 10);
+	geo::Point P(12.15153, 150.153, 10);
 
 	int chk = 0;
 	while (true) {
@@ -111,8 +111,8 @@ int main() {
 		geo::drawObjMat(img, *obj, 0);
 		geo::dotMat(img, (int)P.x, (int)P.y, 0);
 
-		//if (geo::isPointInObj(P, *obj) == true) printf("Point (%f, %f, %f) is inside Obj\n", P.x, P.y, P.z);
-		//else printf("Point (%f, %f, %f) is outside Obj\n", P.x, P.y, P.z);
+		if (geo::isPointInObj(P, *obj) == true) printf("Point (%f, %f, %f) is inside Obj\n", P.x, P.y, P.z);
+		else printf("Point (%f, %f, %f) is outside Obj\n", P.x, P.y, P.z);
 
 		if (chk++ % 120 == 0) {
 			printf("%d %d\n", clock(), (int)(1000.0 / 60 * chk));

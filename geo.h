@@ -23,17 +23,17 @@
 namespace geo {
 	class Point {
 	public:
-		float x;
-		float y;
-		float z;
+		double x;
+		double y;
+		double z;
 		Point() { }
 		Point(const Point& _Point) :
 			x(_Point.x), y(_Point.y), z(_Point.z)
 		{ }
-		Point(float _x, float _y, float _z) :
+		Point(double _x, double _y, double _z) :
 			x(_x), y(_y), z(_z)
 		{ }
-		void extenPoint(float extension);
+		void extenPoint(double extension);
 	};
 
 	class Line {
@@ -75,17 +75,17 @@ namespace geo {
 	inline void dot(GLbyte* data, int x, int y, int value);
 	void dotMat(cv::Mat& img, int x, int y, int value);
 
-	inline void swap(float &x, float &y);
+	inline void swap(double &x, double &y);
 
-	void rotate(Point& _Point, float Mat[][3]);
-	void rotateObj(geo::Obj& obj, float Mat[][3]);
+	void rotate(Point& _Point, double Mat[][3]);
+	void rotateObj(geo::Obj& obj, double Mat[][3]);
 
 	void drawLine(GLbyte* data, const Line& _Line, int value);
 	void drawLineMat(cv::Mat& img, const geo::Line& _Line, int value);
 	void drawTriangleMat(cv::Mat& img, const geo::Triangle& T, int value);
 	void drawObjMat(cv::Mat& img, const geo::Obj &obj, int value);
 
-	inline float areaofTriangle(geo::Point P1, geo::Point P2, geo::Point P3);
+	inline double areaofTriangle(geo::Point P1, geo::Point P2, geo::Point P3);
 
 	bool isPointCrossTriangle(const geo::Point& P, const geo::Triangle& T);
 	bool isPointInObj(const geo::Point& P, const geo::Obj& obj);

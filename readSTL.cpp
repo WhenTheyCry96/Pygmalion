@@ -13,10 +13,10 @@ geo::Point parsePoint(std::ifstream& file) {
 	float x = parseFloat(file);
 	float y = parseFloat(file);
 	float z = parseFloat(file);
-	return geo::Point(x, y, z);
+	return geo::Point((double)x, (double)y, (double)z);
 }
 
-geo::Line* parseSTL2Line(const string filename, unsigned int& _num, float extension) {
+geo::Line* parseSTL2Line(const string filename, unsigned int& _num, double extension) {
 	ifstream fileSTL(filename.c_str(), ios::in | ios::binary);
 	if (!fileSTL) {
 		cerr << "open stl file error" << endl;
@@ -61,7 +61,7 @@ geo::Line* parseSTL2Line(const string filename, unsigned int& _num, float extens
 	return line;
 }
 
-geo::Obj* parseSTL2Obj(const std::string filename, unsigned int& _num, float extension) {
+geo::Obj* parseSTL2Obj(const std::string filename, unsigned int& _num, double extension) {
 	geo::Obj *obj = new geo::Obj;
 	ifstream fileSTL(filename.c_str(), ios::in | ios::binary);
 	if (!fileSTL) {

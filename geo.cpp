@@ -1,6 +1,6 @@
 #include "geo.h"
 
-void geo::Point::extenPoint(float extension) {
+void geo::Point::extenPoint(double extension) {
 	this->x = this->x * extension;
 	this->y = this->y * extension;
 	this->z = this->z * extension;
@@ -28,17 +28,17 @@ void geo::dotMat(cv::Mat& img, int x, int y, int value) {
 	return;
 }
 
-inline void geo::swap(float &x, float &y) {
-	float tmp = x;
+inline void geo::swap(double &x, double &y) {
+	double tmp = x;
 	x = y;
 	y = tmp;
 	return;
 }
 
-void geo::rotate(Point& _Point, float Mat[][3]) {
-	float _x = _Point.x;
-	float _y = _Point.y;
-	float _z = _Point.z;
+void geo::rotate(Point& _Point, double Mat[][3]) {
+	double _x = _Point.x;
+	double _y = _Point.y;
+	double _z = _Point.z;
 
 	_Point.x = Mat[0][0] * _x + Mat[0][1] * _y + Mat[0][2] * _z;
 	_Point.y = Mat[1][0] * _x + Mat[1][1] * _y + Mat[1][2] * _z;
@@ -47,7 +47,7 @@ void geo::rotate(Point& _Point, float Mat[][3]) {
 	return;
 }
 
-void geo::rotateObj(geo::Obj& obj, float Mat[][3]) {
+void geo::rotateObj(geo::Obj& obj, double Mat[][3]) {
 	Triangle* T = obj.T;
 	int num = obj.num;
 
@@ -61,14 +61,14 @@ void geo::rotateObj(geo::Obj& obj, float Mat[][3]) {
 }
 
 void geo::drawLine(GLbyte* data, const Line& _Line, int value) {
-	float x1 = _Line.Point1.x;
-	float y1 = _Line.Point1.y;
-	float x2 = _Line.Point2.x;
-	float y2 = _Line.Point2.y;
+	double x1 = _Line.Point1.x;
+	double y1 = _Line.Point1.y;
+	double x2 = _Line.Point2.x;
+	double y2 = _Line.Point2.y;
 	// y = ax + b
 	if (abs(x1 - x2) > abs(y1 - y2)) {
-		float a = (y2 - y1) / (x2 - x1);
-		float b = -a*x1 + y1;
+		double a = (y2 - y1) / (x2 - x1);
+		double b = -a*x1 + y1;
 		if (x1 < x2) {
 			for (; x1 <= x2; x1++) {
 				dot(data, x1, a*x1 + b, value);
@@ -83,8 +83,8 @@ void geo::drawLine(GLbyte* data, const Line& _Line, int value) {
 	else {
 		swap(x1, y1);
 		swap(x2, y2);
-		float a = (y2 - y1) / (x2 - x1);
-		float b = -a*x1 + y1;
+		double a = (y2 - y1) / (x2 - x1);
+		double b = -a*x1 + y1;
 		if (x1 < x2) {
 			for (; x1 <= x2; x1++) {
 				dot(data, a*x1 + b, x1, value);
@@ -100,14 +100,14 @@ void geo::drawLine(GLbyte* data, const Line& _Line, int value) {
 }
 
 void geo::drawLineMat(cv::Mat& img, const geo::Line& _Line, int value) {
-	float x1 = _Line.Point1.x;
-	float y1 = _Line.Point1.y;
-	float x2 = _Line.Point2.x;
-	float y2 = _Line.Point2.y;
+	double x1 = _Line.Point1.x;
+	double y1 = _Line.Point1.y;
+	double x2 = _Line.Point2.x;
+	double y2 = _Line.Point2.y;
 	// y = ax + b
 	if (abs(x1 - x2) > abs(y1 - y2)) {
-		float a = (y2 - y1) / (x2 - x1);
-		float b = -a*x1 + y1;
+		double a = (y2 - y1) / (x2 - x1);
+		double b = -a*x1 + y1;
 		if (x1 < x2) {
 			for (; x1 <= x2; x1++) {
 				geo::dotMat(img, x1, a*x1 + b, value);
@@ -122,8 +122,8 @@ void geo::drawLineMat(cv::Mat& img, const geo::Line& _Line, int value) {
 	else {
 		geo::swap(x1, y1);
 		geo::swap(x2, y2);
-		float a = (y2 - y1) / (x2 - x1);
-		float b = -a*x1 + y1;
+		double a = (y2 - y1) / (x2 - x1);
+		double b = -a*x1 + y1;
 		if (x1 < x2) {
 			for (; x1 <= x2; x1++) {
 				geo::dotMat(img, a*x1 + b, x1, value);
@@ -156,20 +156,20 @@ void geo::drawObjMat(cv::Mat& img, const geo::Obj &obj, int value) {
 	return;
 }
 
-inline float geo::areaofTriangle(geo::Point P1, geo::Point P2, geo::Point P3) {
+inline double geo::areaofTriangle(geo::Point P1, geo::Point P2, geo::Point P3) {
 	return 0.5 * abs(P1.y * P2.z + P2.y * P3.z + P3.y * P1.z - P1.z * P2.y - P2.z * P3.y - P3.z * P1.y);
 }
 
 bool geo::isPointCrossTriangle(const geo::Point& P, const geo::Triangle& T) {
 
-	float A = geo::areaofTriangle(geo::Point(P.x, T.P1.y, T.P1.z), geo::Point(P.x, T.P2.y, T.P2.z), geo::Point(P.x, T.P3.y, T.P3.z));
-	float A1 = geo::areaofTriangle(geo::Point(P.x, P.y, P.z), geo::Point(P.x, T.P2.y, T.P2.z), geo::Point(P.x, T.P3.y, T.P3.z));
-	float A2 = geo::areaofTriangle(geo::Point(P.x, T.P1.y, T.P1.z), geo::Point(P.x, P.y, P.z), geo::Point(P.x, T.P3.y, T.P3.z));
-	float A3 = geo::areaofTriangle(geo::Point(P.x, T.P1.y, T.P1.z), geo::Point(P.x, T.P2.y, T.P2.z), geo::Point(P.x, P.y, P.z));
+	double A = geo::areaofTriangle(geo::Point(P.x, T.P1.y, T.P1.z), geo::Point(P.x, T.P2.y, T.P2.z), geo::Point(P.x, T.P3.y, T.P3.z));
+	double A1 = geo::areaofTriangle(geo::Point(P.x, P.y, P.z), geo::Point(P.x, T.P2.y, T.P2.z), geo::Point(P.x, T.P3.y, T.P3.z));
+	double A2 = geo::areaofTriangle(geo::Point(P.x, T.P1.y, T.P1.z), geo::Point(P.x, P.y, P.z), geo::Point(P.x, T.P3.y, T.P3.z));
+	double A3 = geo::areaofTriangle(geo::Point(P.x, T.P1.y, T.P1.z), geo::Point(P.x, T.P2.y, T.P2.z), geo::Point(P.x, P.y, P.z));
 	//printf("A: %f\tA1: %f\tA2: %f\tA3: %f\tA1+A2+A3: %f\tA==S(A_n): %d\n", A, A1, A2, A3, A1+A2+A3, abs(A - (A1 + A2 + A3)) < 0.1f);
-	if (abs(A - (A1 + A2 + A3)) < 0.1f) {
+	if (abs(A - (A1 + A2 + A3)) < 0.001) {
 		if ((T.P3.z - T.P1.z)*(T.P2.y - T.P1.y) - (T.P2.z - T.P1.z)*(T.P3.y - T.P1.y) == 0) return false;
-		float x = T.P1.x - ((P.y - T.P1.y)*((T.P2.z - T.P1.z)*(T.P3.x - T.P1.x) - (T.P3.z - T.P1.z)*(T.P2.x - T.P1.x)) + (P.z - T.P1.z)*((T.P2.x - T.P1.x)*(T.P3.y - T.P1.y) - (T.P2.y - T.P1.y)*(T.P3.x - T.P1.x))) / ((T.P3.z - T.P1.z)*(T.P2.y - T.P1.y) - (T.P2.z - T.P1.z)*(T.P3.y - T.P1.y));
+		double x = T.P1.x - ((P.y - T.P1.y)*((T.P2.z - T.P1.z)*(T.P3.x - T.P1.x) - (T.P3.z - T.P1.z)*(T.P2.x - T.P1.x)) + (P.z - T.P1.z)*((T.P2.x - T.P1.x)*(T.P3.y - T.P1.y) - (T.P2.y - T.P1.y)*(T.P3.x - T.P1.x))) / ((T.P3.z - T.P1.z)*(T.P2.y - T.P1.y) - (T.P2.z - T.P1.z)*(T.P3.y - T.P1.y));
 		if (isnan(x) == true) return false;
 		if (x > P.x) {
 			//printf("v1(%f, %f, %f)\t", T.P1.x, T.P1.y, T.P1.z);

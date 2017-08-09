@@ -1,6 +1,6 @@
 #include "geo.h"
 
-void Point::extenPoint(float extension) {
+void geo::Point::extenPoint(float extension) {
 	this->x = this->x * extension;
 	this->y = this->y * extension;
 	this->z = this->z * extension;
@@ -8,7 +8,7 @@ void Point::extenPoint(float extension) {
 	return;
 }
 
-inline void dot(GLbyte* data, int x, int y, int value) {
+inline void geo::dot(GLbyte* data, int x, int y, int value) {
 	int _x = x + WIDTH / 2;
 	int _y = y + HEIGHT / 2;
 
@@ -18,14 +18,24 @@ inline void dot(GLbyte* data, int x, int y, int value) {
 	return;
 }
 
-inline void swap(float &x, float &y) {
+inline void geo::dotMat(cv::Mat& img, int x, int y, int value) {
+	int _x = x + WIDTH / 2;
+	int _y = y + HEIGHT / 2;
+
+	if (_x >= 0 && _x < WIDTH && _y >= 0 && _y < HEIGHT) {
+		img.at<unsigned char>(cv::Point(_x, HEIGHT - _y -1)) = value;
+	}
+	return;
+}
+
+inline void geo::swap(float &x, float &y) {
 	float tmp = x;
 	x = y;
 	y = tmp;
 	return;
 }
 
-void rotate(Point& _Point, float Mat[][3]) {
+void geo::rotate(Point& _Point, float Mat[][3]) {
 	float _x = _Point.x;
 	float _y = _Point.y;
 	float _z = _Point.z;
@@ -37,7 +47,7 @@ void rotate(Point& _Point, float Mat[][3]) {
 	return;
 }
 
-void drawLine(GLbyte* data, const Line& _Line, int value) {
+void geo::drawLine(GLbyte* data, const Line& _Line, int value) {
 	float x1 = _Line.Point1.x;
 	float y1 = _Line.Point1.y;
 	float x2 = _Line.Point2.x;
@@ -73,5 +83,72 @@ void drawLine(GLbyte* data, const Line& _Line, int value) {
 			}
 		}
 	}
+	return;
+}
+
+void geo::drawLineMat(cv::Mat& img, const geo::Line& _Line, int value) {
+	float x1 = _Line.Point1.x;
+	float y1 = _Line.Point1.y;
+	float x2 = _Line.Point2.x;
+	float y2 = _Line.Point2.y;
+	// y = ax + b
+	if (abs(x1 - x2) > abs(y1 - y2)) {
+		float a = (y2 - y1) / (x2 - x1);
+		float b = -a*x1 + y1;
+		if (x1 < x2) {
+			for (; x1 <= x2; x1++) {
+				geo::dotMat(img, x1, a*x1 + b, value);
+			}
+		}
+		else {
+			for (; x2 <= x1; x2++) {
+				geo::dotMat(img, x2, a*x2 + b, value);
+			}
+		}
+	}
+	else {
+		geo::swap(x1, y1);
+		geo::swap(x2, y2);
+		float a = (y2 - y1) / (x2 - x1);
+		float b = -a*x1 + y1;
+		if (x1 < x2) {
+			for (; x1 <= x2; x1++) {
+				geo::dotMat(img, a*x1 + b, x1, value);
+			}
+		}
+		else {
+			for (; x2 <= x1; x2++) {
+				geo::dotMat(img, a*x2 + b, x2, value);
+			}
+		}
+	}
+	return;
+}
+
+void geo::drawTriangleMat(cv::Mat& img, const geo::Triangle& T, int value) {
+	geo::drawLineMat(img, geo::Line(T.P1, T.P2), value);
+	geo::drawLineMat(img, geo::Line(T.P2, T.P3), value);
+	geo::drawLineMat(img, geo::Line(T.P3, T.P2), value);
+
+	return;
+}
+
+void geo::drawObjMat(cv::Mat& img, const geo::Obj &obj, int value) {
+	int num = obj.num;
+
+	for (int i = 0; i < num; i++) {
+		geo::drawTriangleMat(img, obj.T[i], value);
+	}
+
+	return;
+}
+
+void geo::array8bit2Mat(cv::Mat& img, char* data, int width, int height) {
+	for (int h = 0; h < height; h++) {
+		for (int w = 0; w < width; w++) {
+			img.at<unsigned char>(cv::Point(w, h)) = data[(height - h - 1)*width + w] * 255;
+		}
+	}
+
 	return;
 }

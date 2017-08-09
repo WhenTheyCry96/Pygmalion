@@ -1,9 +1,6 @@
 #include "makeBMP.h"
 #include "readSTL.h"
 #include "geo.h"
-#include "opencv2/opencv.hpp"
-#include "opencv2/core/core.hpp"
-#include "opencv2/highgui/highgui.hpp"
 
 using namespace cv;
 using namespace std;
@@ -72,11 +69,11 @@ int main() {
 	//	//Sleep(1000);
 	//}
 
-	string filename("testcubehole.stl");
-	Line* line;
+	string filename("testcube.stl");
+	geo::Line* line;
 	unsigned int trigleNum;
-	float extension = 20;
-	line = parseSTL(filename, trigleNum, extension);
+	float extension = 1;
+	line = parseSTL2Line(filename, trigleNum, extension);
 
 	int linenum = trigleNum * 3;
 
@@ -92,56 +89,34 @@ int main() {
 	float maty[3][3] = { { cos(degy * Deg2Rad), 0, sin(degy * Deg2Rad) },
 						{ 0, 1, 0 },
 						{ -sin(degy * Deg2Rad), 0, cos(degy * Deg2Rad) } };
+
 	Mat img;
+	img = Mat(WIDTH, HEIGHT, CV_8UC1, Scalar(0));
 	namedWindow("testImage");
+	if (!img.data) {
+		cerr << "imread error" << endl;
+		assert(false);
+	}
 
 	int chk = 0;
 	while (true) {
 		for (int i = 0; i < linenum; i++) {
 			rotate(line[i].Point1, maty);
 			rotate(line[i].Point2, maty);
-			drawLine(::data, line[i], 1);
-		}
-
-		StoreIMG(::data, WIDTH, HEIGHT);
-
-		img = imread("IMG.bmp", CV_LOAD_IMAGE_UNCHANGED);
-		if (!img.data) {
-			cerr << "imread error" << endl;
-			assert(false);
+			drawLineMat(img, line[i], 255);//faster than cv::line()
+			//cv::line(img, cv::Point(line[i].Point1.x + WIDTH/2, line[i].Point1.y + HEIGHT / 2), cv::Point(line[i].Point2.x + WIDTH / 2, line[i].Point2.y + HEIGHT / 2), 255);
 		}
 
 		imshow("testImage", img);
-		waitKey(1000 / 600);
+		waitKey(1000 / 1000);
 
 		for (int i = 0; i < linenum; i++) {
-			drawLine(::data, line[i], 0);
+			drawLineMat(img, line[i], 0);//faster than cv::line()
+			//cv::line(img, cv::Point(line[i].Point1.x + WIDTH / 2, line[i].Point1.y + HEIGHT / 2), cv::Point(line[i].Point2.x + WIDTH / 2, line[i].Point2.y + HEIGHT / 2), 0);
 		}
 
-		//for (int i = 0; i < WIDTH * HEIGHT; i++) {
-		//	::data[i] = 0;
-		//}
-
-		if(chk++ % 120 == 0) printf("%d ", clock());
-		//Sleep(200);
-		//break;
+		if(chk++ % 120 == 0) printf("%d %d\n", clock(), (int)(1000.0 / 60 * chk));
 	}
-
-	//Mat mat;// = Mat(512, 512, CV_8UC1);
-	//mat = imread("lena512.bmp");
-	//imwrite("lena512cv.bmp", mat);
-
-	//if (!mat.data) {
-	//	cerr << "imread error" << endl;
-	//	assert(false);
-	//}
-
-	//namedWindow("testImage");
-
-	//imshow("testImage", mat);
-	//waitKey(0);
-
-	//destroyWindow("test Image");
 
 	return 0;
 }

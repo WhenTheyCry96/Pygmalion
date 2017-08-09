@@ -70,12 +70,10 @@ int main() {
 	//}
 
 	string filename("testcube.stl");
-	geo::Line* line;
+	geo::Obj* obj;
 	unsigned int trigleNum;
 	float extension = 1;
-	line = parseSTL2Line(filename, trigleNum, extension);
-
-	int linenum = trigleNum * 3;
+	obj = parseSTL2Obj(filename, trigleNum, extension);
 
 	float degx = 3;
 	float degy = 3;
@@ -98,25 +96,31 @@ int main() {
 		assert(false);
 	}
 
+	geo::Point P(12.153, 120.153, 10);
+
 	int chk = 0;
 	while (true) {
-		for (int i = 0; i < linenum; i++) {
-			rotate(line[i].Point1, maty);
-			rotate(line[i].Point2, maty);
-			drawLineMat(img, line[i], 255);//faster than cv::line()
-			//cv::line(img, cv::Point(line[i].Point1.x + WIDTH/2, line[i].Point1.y + HEIGHT / 2), cv::Point(line[i].Point2.x + WIDTH / 2, line[i].Point2.y + HEIGHT / 2), 255);
-		}
+		geo::rotateObj(*obj, maty);
+		geo::rotate(P, maty);
+		geo::drawObjMat(img, *obj, 255);
+		geo::dotMat(img, (int)P.x, (int)P.y, 255);
 
 		imshow("testImage", img);
 		waitKey(1000 / 1000);
 
-		for (int i = 0; i < linenum; i++) {
-			drawLineMat(img, line[i], 0);//faster than cv::line()
-			//cv::line(img, cv::Point(line[i].Point1.x + WIDTH / 2, line[i].Point1.y + HEIGHT / 2), cv::Point(line[i].Point2.x + WIDTH / 2, line[i].Point2.y + HEIGHT / 2), 0);
-		}
+		geo::drawObjMat(img, *obj, 0);
+		geo::dotMat(img, (int)P.x, (int)P.y, 0);
 
-		if(chk++ % 120 == 0) printf("%d %d\n", clock(), (int)(1000.0 / 60 * chk));
+		//if (geo::isPointInObj(P, *obj) == true) printf("Point (%f, %f, %f) is inside Obj\n", P.x, P.y, P.z);
+		//else printf("Point (%f, %f, %f) is outside Obj\n", P.x, P.y, P.z);
+
+		if (chk++ % 120 == 0) {
+			printf("%d %d\n", clock(), (int)(1000.0 / 60 * chk));
+
+		}
 	}
+
+	getch();
 
 	return 0;
 }

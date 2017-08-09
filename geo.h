@@ -5,6 +5,11 @@
 #include <ctime>
 #include <conio.h>
 #include <windows.h>
+#include <fstream>
+#include <string.h>
+#include <cstring>
+#include <cassert>
+
 #include "opencv2/opencv.hpp"
 #include "opencv2/core/core.hpp"
 #include "opencv2/highgui/highgui.hpp"
@@ -68,16 +73,22 @@ namespace geo {
 	};
 
 	inline void dot(GLbyte* data, int x, int y, int value);
-	inline void dotMat(cv::Mat& img, int x, int y, int value);
+	void dotMat(cv::Mat& img, int x, int y, int value);
 
 	inline void swap(float &x, float &y);
 
 	void rotate(Point& _Point, float Mat[][3]);
+	void rotateObj(geo::Obj& obj, float Mat[][3]);
 
 	void drawLine(GLbyte* data, const Line& _Line, int value);
 	void drawLineMat(cv::Mat& img, const geo::Line& _Line, int value);
 	void drawTriangleMat(cv::Mat& img, const geo::Triangle& T, int value);
 	void drawObjMat(cv::Mat& img, const geo::Obj &obj, int value);
+
+	inline float areaofTriangle(geo::Point P1, geo::Point P2, geo::Point P3);
+
+	bool isPointCrossTriangle(const geo::Point& P, const geo::Triangle& T);
+	bool isPointInObj(const geo::Point& P, const geo::Obj& obj);
 
 	void array8bit2Mat(cv::Mat& mat, char* data, int width, int height);
 }

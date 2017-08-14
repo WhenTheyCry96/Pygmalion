@@ -99,6 +99,10 @@ int main() {
 	geo::Point P(12.15153, 150.153, 10);
 
 	int chk = 0;
+
+	geo::Point prevLeapFinger;
+	geo::Point prevLeapPalm;
+
 	while (true) {
 		geo::rotateObj(*obj, maty);
 		geo::rotate(P, maty);
@@ -113,6 +117,18 @@ int main() {
 
 		//if (geo::isPointInObj(P, *obj) == true) printf("Point (%f, %f, %f) is inside Obj\n", P.x, P.y, P.z);
 		//else printf("Point (%f, %f, %f) is outside Obj\n", P.x, P.y, P.z);
+
+		if (geo::isFingerTouched()) {
+			
+			geo::Point temp = geo::getFingerCoord();
+			if (obj != NULL) {
+				geo::transformObj(*obj, geo::Point P(temp.x - prevLeapFinger.x, temp.y - prevLeapFinger.y, temp.z - prevLeapFinger.z));
+			}
+			else {
+				obj = geo::SearchObjRelativePoint(objList, temp);
+			}
+			prevLeapFinger = temp;
+		}
 
 		if (chk++ % 120 == 0) {
 			printf("%d %d\n", clock(), (int)(1000.0 / 60 * chk));

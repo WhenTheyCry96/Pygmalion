@@ -196,6 +196,23 @@ bool geo::isPointInObj(const geo::Point& P, const geo::Obj& obj) {
 	return false;
 }
 
+geo::Obj* geo::SearchObjRelativePoint(const geo::ObjList& objlist, geo::Point& P) {
+	if (objlist.head != NULL) {
+		geo::Obj* obj = objlist.head;
+		while (true) {
+			if (geo::isPointInObj(P, *obj) == true) {
+				return obj;
+			}
+			else if (obj->next == NULL) {
+				return NULL;
+			}
+			else {
+				obj = obj->next;
+			}
+		}
+	}
+	return NULL;
+}
 
 void geo::array8bit2Mat(cv::Mat& img, char* data, int width, int height) {
 	for (int h = 0; h < height; h++) {

@@ -111,12 +111,11 @@ int main() {
 		geo::drawObjMat(img, *obj, 0);
 		geo::dotMat(img, (int)P.x, (int)P.y, 0);
 
-		if (geo::isPointInObj(P, *obj) == true) printf("Point (%f, %f, %f) is inside Obj\n", P.x, P.y, P.z);
-		else printf("Point (%f, %f, %f) is outside Obj\n", P.x, P.y, P.z);
+		//if (geo::isPointInObj(P, *obj) == true) printf("Point (%f, %f, %f) is inside Obj\n", P.x, P.y, P.z);
+		//else printf("Point (%f, %f, %f) is outside Obj\n", P.x, P.y, P.z);
 
 		if (chk++ % 120 == 0) {
 			printf("%d %d\n", clock(), (int)(1000.0 / 60 * chk));
-
 		}
 	}
 

@@ -66,9 +66,19 @@ namespace geo {
 	class Obj {
 	public:
 		geo::Triangle* T;
+		geo::Obj* next;
 		int num;
 		Obj():
-			T(NULL), num(0)
+			T(NULL), num(0), next(NULL)
+		{ }
+	};
+
+	class ObjList {
+	public:
+		geo::Obj* head;
+		geo::Obj* tail;
+		ObjList() :
+			head(NULL), tail(NULL)
 		{ }
 	};
 
@@ -89,6 +99,8 @@ namespace geo {
 
 	bool isPointCrossTriangle(const geo::Point& P, const geo::Triangle& T);
 	bool isPointInObj(const geo::Point& P, const geo::Obj& obj);
+
+	geo::Obj* SearchObjRelativePoint(const geo::ObjList& objlist, geo::Point& P);
 
 	void array8bit2Mat(cv::Mat& mat, char* data, int width, int height);
 }

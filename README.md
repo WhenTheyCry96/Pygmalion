@@ -1,6 +1,6 @@
 # Pygmalion
 Language: C++
 
-Skill: OpenCV
+Skill: OpenCV, omp
 
 show 3D model fast

@@ -95,9 +95,10 @@ namespace geo {
 			for (int i = 0; i < 5; i++) {
 				this->fingertip[i] = _H.fingertip[i];
 				this->proximal[i] = _H.proximal[i];
-				this->wrist = _H.wrist;
 			}
+			this->wrist = _H.wrist;
 		}
+		void rotate(double Mat[][3]);
 	};
 
 	inline void dot(GLbyte* data, int x, int y, int value);

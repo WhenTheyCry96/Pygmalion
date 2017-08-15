@@ -14,7 +14,7 @@ void Leap_Listener::onDisconnect(const Leap::Controller& controller) {
 void Leap_Listener::onFrame(const Leap::Controller& controller) {
 	 Leap::Frame frame = controller.frame();
 	Leap::Hand hand = frame.hands()[0];
-	if (hand.isValid() == false) std::cout<<"?????????"<<std::endl;
+	if (hand.isValid() == false) ;
 
 	Leap::FingerList phalanges1 = hand.fingers();
 	int count = 0;
@@ -23,7 +23,7 @@ void Leap_Listener::onFrame(const Leap::Controller& controller) {
 		e_hand.fingertip[count] = geo::Point(curPos[0], curPos[1], curPos[2]);
 
 		Leap::Bone bone;
-		Leap::Bone::Type boneType = Leap::Bone::Type::TYPE_METACARPAL;
+		Leap::Bone::Type boneType = Leap::Bone::Type::TYPE_PROXIMAL;
 		bone = (*fl).bone(boneType);
 		curPos = bone.center();
 		e_hand.proximal[count] = geo::Point(curPos[0], curPos[1], curPos[2]);

@@ -38,6 +38,16 @@ void geo::ObjList::rotateObjList(double Mat[][3]) {
 	return;
 }
 
+void geo::Hand::rotate(double Mat[][3]) {
+	for (int i = 0; i < 5; i++) {
+		geo::rotate(this->fingertip[i], Mat);
+		geo::rotate(this->proximal[i], Mat);
+
+	}
+	geo::rotate(this->wrist, Mat);
+	return;
+}
+
 inline void geo::dot(GLbyte* data, int x, int y, int value) {
 	int _x = x + WIDTH / 2;
 	int _y = y + HEIGHT / 2;
@@ -206,6 +216,7 @@ void geo::drawTriangleMat(cv::Mat& img, const geo::Triangle& T, int value) {
 void geo::drawObjMat(cv::Mat& img, const geo::Obj &obj, int value) {
 	int num = obj.num;
 
+#pragma omp parallel for
 	for (int i = 0; i < num; i++) {
 		geo::drawTriangleMat(img, obj.T[i], value);
 	}
@@ -292,7 +303,7 @@ void geo::array8bit2Mat(cv::Mat& img, char* data, int width, int height) {
 	return;
 }
 bool geo::isFingerTouched(geo::Hand& hand) {
-	if (geo::distPoint(hand.fingertip[0], hand.fingertip[1]) < 15) return true;
+	if (geo::distPoint(hand.fingertip[0], hand.fingertip[1]) < 50) return true;
 	else return false;
 }
 

@@ -90,6 +90,33 @@ void geo::rotateObj(geo::Obj& obj, double Mat[][3]) {
 	return;
 }
 
+void geo::transformPoint(Point& _Point, double Mat[]) {
+	_Point.x = _Point.x + Mat[0];
+	_Point.y = _Point.y + Mat[1];
+	_Point.z = _Point.z + Mat[2];
+	return;
+}
+
+void geo::transformTriangle(geo::Triangle& _T, double Mat[]) {
+	geo::transformPoint(_T.P1, Mat);
+	geo::transformPoint(_T.P2, Mat);
+	geo::transformPoint(_T.P3, Mat);
+	return;
+}
+
+void geo::transformObj(geo::Obj& obj, double Mat[]) {
+	Triangle* T = obj.T;
+	int num = obj.num;
+
+	for (int i = 0; i < num; i++) {
+		geo::transformPoint(T[i].P1, Mat);
+		geo::transformPoint(T[i].P2, Mat);
+		geo::transformPoint(T[i].P3, Mat);
+	}
+	return;
+}
+
+
 void geo::drawLine(GLbyte* data, const Line& _Line, int value) {
 	double x1 = _Line.Point1.x;
 	double y1 = _Line.Point1.y;
@@ -183,6 +210,17 @@ void geo::drawObjMat(cv::Mat& img, const geo::Obj &obj, int value) {
 		geo::drawTriangleMat(img, obj.T[i], value);
 	}
 
+	return;
+}
+
+void geo::drawHandMat(cv::Mat& img, const geo::Hand &hand, int value) {
+	for (int i = 0; i < 5; i++) {
+		geo::Line templine(hand.fingertip[i], hand.proximal[i]);
+		geo::drawLineMat(img, templine, value);
+
+		templine = geo::Line(hand.wrist, hand.proximal[i]);
+		geo::drawLineMat(img, templine, value);
+	}
 	return;
 }
 

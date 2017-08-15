@@ -14,8 +14,8 @@
 #include "opencv2/core/core.hpp"
 #include "opencv2/highgui/highgui.hpp"
 
-#define PI 3.14159265
-#define Deg2Rad PI/180
+#define geo_PI 3.14159265
+#define Deg2Rad geo_PI/180
 #define GLbyte char
 #define WIDTH 768
 #define HEIGHT 768
@@ -85,6 +85,21 @@ namespace geo {
 		void rotateObjList(double Mat[][3]);
 	};
 
+	class Hand {
+	public:
+		geo::Point fingertip[5];
+		geo::Point proximal[5];
+		geo::Point wrist;
+		Hand() {}
+		Hand(geo::Hand& _H) {
+			for (int i = 0; i < 5; i++) {
+				this->fingertip[i] = _H.fingertip[i];
+				this->proximal[i] = _H.proximal[i];
+				this->wrist = _H.wrist;
+			}
+		}
+	};
+
 	inline void dot(GLbyte* data, int x, int y, int value);
 	void dotMat(cv::Mat& img, int x, int y, int value);
 
@@ -93,10 +108,16 @@ namespace geo {
 	void rotate(Point& _Point, double Mat[][3]);
 	void rotateObj(geo::Obj& obj, double Mat[][3]);
 
+	void transformPoint(Point& _Point, double Mat[]);
+	void transformTriangle(geo::Triangle& _T, double Mat[]);
+	void transformObj(geo::Obj& obj, double Mat[]);
+
+
 	void drawLine(GLbyte* data, const Line& _Line, int value);
 	void drawLineMat(cv::Mat& img, const geo::Line& _Line, int value);
 	void drawTriangleMat(cv::Mat& img, const geo::Triangle& T, int value);
 	void drawObjMat(cv::Mat& img, const geo::Obj &obj, int value);
+	void drawHandMat(cv::Mat& img, const geo::Hand &hand, int value);
 
 	inline double areaofTriangle(geo::Point P1, geo::Point P2, geo::Point P3);
 

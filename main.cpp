@@ -1,14 +1,24 @@
 #include "makeBMP.h"
 #include "readSTL.h"
 #include "geo.h"
+#include "controller.h"
 
 using namespace cv;
 using namespace std;
 
 GLbyte data[HEIGHT * WIDTH];
 
+geo::Hand e_hand;
+
 int main() {
 
+	/*while (1) {
+		ex();
+		for (int i = 0; i < 10; i++) {
+			std::cout << "[ " << fingerPos[i][0] << ", " << fingerPos[i][1] << ", " << fingerPos[i][2] << " ]" << std::endl;
+		}
+	}
+	return 0;*/
 	/***************
 	*
 	* drawLine Check
@@ -69,6 +79,10 @@ int main() {
 	//	//Sleep(1000);
 	//}
 
+	Leap::Controller controller;
+	Leap_Listener listener;
+	controller.addListener(listener);
+
 	geo::ObjList objlist;
 
 	string filename("testcube.stl");
@@ -108,36 +122,42 @@ int main() {
 	geo::Point prevLeapPalm;
 	//obj = NULL;
 
+	geo::Hand i_hand;
+
 	while (true) {
 		objlist.rotateObjList(maty);
 		geo::rotate(P, maty);
 		objlist.drawObjListMat(img, 255);
 		//geo::drawObjMat(img, *obj, 255);
 		geo::dotMat(img, (int)P.x, (int)P.y, 255);
+		i_hand = e_hand;
+		geo::drawHandMat(img, i_hand, 255);
 
 		imshow("testImage", img);
 		waitKey(1000 / 1000);
 
 		geo::drawObjMat(img, *obj, 0);
 		geo::dotMat(img, (int)P.x, (int)P.y, 0);
+		geo::drawHandMat(img, i_hand, 0);
 
 		//if (geo::isPointInObj(P, *obj) == true) printf("Point (%f, %f, %f) is inside Obj\n", P.x, P.y, P.z);
 		//else printf("Point (%f, %f, %f) is outside Obj\n", P.x, P.y, P.z);
 
-		/*if (geo::isFingerTouched()) {
-			
-			geo::Point temp = geo::getFingerCoord();
-			if (obj != NULL) {
-				geo::transformObj(*obj, geo::Point P(temp.x - prevLeapFinger.x, temp.y - prevLeapFinger.y, temp.z - prevLeapFinger.z));
-			}
-			else {
-				obj = geo::SearchObjRelativePoint(objlist, temp);
-			}
-			prevLeapFinger = temp;
-		}
-		else {
-			obj = NULL;
-		}*/
+		//if (geo::isFingerTouched()) {
+		//	
+		//	geo::Point temp = geo::getFingerCoord();
+		//	if (obj != NULL) {
+		//		double mat[3] = { temp.x - prevLeapFinger.x, temp.y - prevLeapFinger.y, temp.z - prevLeapFinger.z };
+		//		geo::transformObj(*obj, mat);
+		//	}
+		//	else {
+		//		obj = geo::SearchObjRelativePoint(objlist, temp);
+		//	}
+		//	prevLeapFinger = temp;
+		//}
+		//else {
+		//	obj = NULL;
+		//}
 
 		if (chk++ % 120 == 0) {
 			printf("%d %d\n", clock(), (int)(1000.0 / 60 * chk));

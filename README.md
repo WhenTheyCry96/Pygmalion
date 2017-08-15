@@ -1,4 +1,4 @@
-# PigOpenGL
+# Pygmalion
 Language: C++
 
 Skill: OpenCV

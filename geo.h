@@ -80,6 +80,9 @@ namespace geo {
 		ObjList() :
 			head(NULL), tail(NULL)
 		{ }
+		void add(geo::Obj* obj);
+		void drawObjListMat(cv::Mat& img, int value);
+		void rotateObjList(double Mat[][3]);
 	};
 
 	inline void dot(GLbyte* data, int x, int y, int value);

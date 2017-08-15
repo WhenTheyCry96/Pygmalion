@@ -8,6 +8,36 @@ void geo::Point::extenPoint(double extension) {
 	return;
 }
 
+void geo::ObjList::add(geo::Obj* obj) {
+	if (head == NULL) {
+		head = obj;
+		tail = obj;
+	}
+	else {
+		tail->next = obj;
+		tail = obj;
+	}
+	return;
+}
+
+void geo::ObjList::drawObjListMat(cv::Mat& img, int value) {
+	geo::Obj* tempobj = head;
+	while (tempobj != NULL) {
+		geo::drawObjMat(img, *tempobj, value);
+		tempobj = tempobj->next;
+	}
+	return;
+}
+
+void geo::ObjList::rotateObjList(double Mat[][3]) {
+	geo::Obj* tempobj = head;
+	while (tempobj != NULL) {
+		geo::rotateObj(*tempobj, Mat);
+		tempobj = tempobj->next;
+	}
+	return;
+}
+
 inline void geo::dot(GLbyte* data, int x, int y, int value) {
 	int _x = x + WIDTH / 2;
 	int _y = y + HEIGHT / 2;

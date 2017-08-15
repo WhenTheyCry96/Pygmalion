@@ -69,11 +69,15 @@ int main() {
 	//	//Sleep(1000);
 	//}
 
+	geo::ObjList objlist;
+
 	string filename("testcube.stl");
 	geo::Obj* obj;
 	unsigned int trigleNum;
 	double extension = 1;
 	obj = parseSTL2Obj(filename, trigleNum, extension);
+
+	objlist.add(obj);
 
 	double degx = 3;
 	double degy = 3;
@@ -102,11 +106,13 @@ int main() {
 
 	geo::Point prevLeapFinger;
 	geo::Point prevLeapPalm;
+	//obj = NULL;
 
 	while (true) {
-		geo::rotateObj(*obj, maty);
+		objlist.rotateObjList(maty);
 		geo::rotate(P, maty);
-		geo::drawObjMat(img, *obj, 255);
+		objlist.drawObjListMat(img, 255);
+		//geo::drawObjMat(img, *obj, 255);
 		geo::dotMat(img, (int)P.x, (int)P.y, 255);
 
 		imshow("testImage", img);
@@ -118,17 +124,20 @@ int main() {
 		//if (geo::isPointInObj(P, *obj) == true) printf("Point (%f, %f, %f) is inside Obj\n", P.x, P.y, P.z);
 		//else printf("Point (%f, %f, %f) is outside Obj\n", P.x, P.y, P.z);
 
-		if (geo::isFingerTouched()) {
+		/*if (geo::isFingerTouched()) {
 			
 			geo::Point temp = geo::getFingerCoord();
 			if (obj != NULL) {
 				geo::transformObj(*obj, geo::Point P(temp.x - prevLeapFinger.x, temp.y - prevLeapFinger.y, temp.z - prevLeapFinger.z));
 			}
 			else {
-				obj = geo::SearchObjRelativePoint(objList, temp);
+				obj = geo::SearchObjRelativePoint(objlist, temp);
 			}
 			prevLeapFinger = temp;
 		}
+		else {
+			obj = NULL;
+		}*/
 
 		if (chk++ % 120 == 0) {
 			printf("%d %d\n", clock(), (int)(1000.0 / 60 * chk));

@@ -12,7 +12,6 @@ void Leap_Listener::onDisconnect(const Leap::Controller& controller) {
 	std::cout << "Disconnected" << std::endl;
 }
 void Leap_Listener::onFrame(const Leap::Controller& controller) {
-	 std::cout << "New frame available" << std::endl;
 	 Leap::Frame frame = controller.frame();
 	Leap::Hand hand = frame.hands()[0];
 	if (hand.isValid() == false) std::cout<<"?????????"<<std::endl;

@@ -136,28 +136,33 @@ int main() {
 		imshow("testImage", img);
 		waitKey(1000 / 1000);
 
-		geo::drawObjMat(img, *obj, 0);
+		objlist.drawObjListMat(img, 0);
 		geo::dotMat(img, (int)P.x, (int)P.y, 0);
 		geo::drawHandMat(img, i_hand, 0);
 
 		//if (geo::isPointInObj(P, *obj) == true) printf("Point (%f, %f, %f) is inside Obj\n", P.x, P.y, P.z);
 		//else printf("Point (%f, %f, %f) is outside Obj\n", P.x, P.y, P.z);
+		
+		if (controller.frame().hands()[0].isValid() == true) {
+			if (geo::isFingerTouched(i_hand)) {
 
-		//if (geo::isFingerTouched()) {
-		//	
-		//	geo::Point temp = geo::getFingerCoord();
-		//	if (obj != NULL) {
-		//		double mat[3] = { temp.x - prevLeapFinger.x, temp.y - prevLeapFinger.y, temp.z - prevLeapFinger.z };
-		//		geo::transformObj(*obj, mat);
-		//	}
-		//	else {
-		//		obj = geo::SearchObjRelativePoint(objlist, temp);
-		//	}
-		//	prevLeapFinger = temp;
-		//}
-		//else {
-		//	obj = NULL;
-		//}
+				geo::Point temp = geo::getFingerCoord(i_hand);
+				if (obj != NULL) {
+					double mat[3] = { temp.x - prevLeapFinger.x, temp.y - prevLeapFinger.y, temp.z - prevLeapFinger.z };
+					geo::transformObj(*obj, mat);
+				}
+				else {
+					obj = geo::SearchObjRelativePoint(objlist, temp);
+				}
+				prevLeapFinger = temp;
+			}
+			else {
+				obj = NULL;
+			}
+		}
+		else {
+			obj = NULL;
+		}
 
 		if (chk++ % 120 == 0) {
 			printf("%d %d\n", clock(), (int)(1000.0 / 60 * chk));

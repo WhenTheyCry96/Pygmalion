@@ -127,4 +127,9 @@ namespace geo {
 	geo::Obj* SearchObjRelativePoint(const geo::ObjList& objlist, geo::Point& P);
 
 	void array8bit2Mat(cv::Mat& mat, char* data, int width, int height);
+
+	bool isFingerTouched(geo::Hand& hand);
+	geo::Point getFingerCoord(geo::Hand& hand);
+
+	double distPoint(geo::Point& P1, geo::Point& P2);
 }

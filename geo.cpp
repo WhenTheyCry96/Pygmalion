@@ -291,3 +291,15 @@ void geo::array8bit2Mat(cv::Mat& img, char* data, int width, int height) {
 
 	return;
 }
+bool geo::isFingerTouched(geo::Hand& hand) {
+	if (geo::distPoint(hand.fingertip[0], hand.fingertip[1]) < 15) return true;
+	else return false;
+}
+
+geo::Point geo::getFingerCoord(geo::Hand& hand) {
+	return hand.fingertip[0];
+}
+
+double geo::distPoint(geo::Point& P1, geo::Point& P2) {
+	return sqrt(pow(P1.x - P2.x, 2) + pow(P1.y - P2.y, 2) + pow(P1.z - P2.z, 2));
+}

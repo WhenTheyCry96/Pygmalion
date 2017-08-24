@@ -9,7 +9,7 @@
 #include <string.h>
 #include <cstring>
 #include <cassert>
-
+#include <WinUser.h>
 #include "opencv2/opencv.hpp"
 #include "opencv2/core/core.hpp"
 #include "opencv2/highgui/highgui.hpp"
@@ -103,6 +103,7 @@ namespace geo {
 
 	inline void dot(GLbyte* data, int x, int y, int value);
 	void dotMat(cv::Mat& img, int x, int y, int value);
+	void dot24bitMat(cv::Mat& img, int x, int y, int value, int base);
 
 	inline void swap(double &x, double &y);
 
@@ -116,8 +117,11 @@ namespace geo {
 
 	void drawLine(GLbyte* data, const Line& _Line, int value);
 	void drawLineMat(cv::Mat& img, const geo::Line& _Line, int value);
+	void drawLine24bitMat(cv::Mat& img, const geo::Line& _Line, int value, int base);
 	void drawTriangleMat(cv::Mat& img, const geo::Triangle& T, int value);
+	void drawTriangle24bitMat(cv::Mat& img, const geo::Triangle& T, int value, int vase);
 	void drawObjMat(cv::Mat& img, const geo::Obj &obj, int value);
+	void drawObj24bitMat(cv::Mat& img, const geo::Obj &obj, int value, int base);
 	void drawHandMat(cv::Mat& img, const geo::Hand &hand, int value);
 
 	inline double areaofTriangle(geo::Point P1, geo::Point P2, geo::Point P3);

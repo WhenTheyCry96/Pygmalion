@@ -68,6 +68,22 @@ void geo::dotMat(cv::Mat& img, int x, int y, int value) {
 	return;
 }
 
+void geo::dot24bitMat(cv::Mat& img, int x, int y, int value, int base) {
+	int _x = x + WIDTH / 2;
+	int _y = y + HEIGHT / 2;
+	int index = _x + _y * WIDTH;
+	int indextr = index / 24 + base * WIDTH * HEIGHT / 24;
+	int __y = indextr / WIDTH;
+	int __x = indextr % WIDTH;
+	int subIndex = index % 24;
+	int RGB = subIndex / 8;
+	int RGBIndex = subIndex % 8;
+	if (_x >= 0 && _x < WIDTH && _y >= 0 && _y < HEIGHT) {
+		img.at<cv::Vec3b>(cv::Point(__x, HEIGHT - __y - 1))[RGB] = value << RGBIndex;
+	}
+	return;
+}
+
 inline void geo::swap(double &x, double &y) {
 	double tmp = x;
 	x = y;
@@ -205,10 +221,57 @@ void geo::drawLineMat(cv::Mat& img, const geo::Line& _Line, int value) {
 	return;
 }
 
+void geo::drawLine24bitMat(cv::Mat& img, const geo::Line& _Line, int value, int base) {
+	double x1 = _Line.Point1.x;
+	double y1 = _Line.Point1.y;
+	double x2 = _Line.Point2.x;
+	double y2 = _Line.Point2.y;
+	// y = ax + b
+	if (abs(x1 - x2) > abs(y1 - y2)) {
+		double a = (y2 - y1) / (x2 - x1);
+		double b = -a*x1 + y1;
+		if (x1 < x2) {
+			for (; x1 <= x2; x1++) {
+				geo::dot24bitMat(img, x1, a*x1 + b, value, base);
+			}
+		}
+		else {
+			for (; x2 <= x1; x2++) {
+				geo::dot24bitMat(img, x2, a*x2 + b, value, base);
+			}
+		}
+	}
+	else {
+		geo::swap(x1, y1);
+		geo::swap(x2, y2);
+		double a = (y2 - y1) / (x2 - x1);
+		double b = -a*x1 + y1;
+		if (x1 < x2) {
+			for (; x1 <= x2; x1++) {
+				geo::dot24bitMat(img, a*x1 + b, x1, value, base);
+			}
+		}
+		else {
+			for (; x2 <= x1; x2++) {
+				geo::dot24bitMat(img, a*x2 + b, x2, value, base);
+			}
+		}
+	}
+	return;
+}
+
 void geo::drawTriangleMat(cv::Mat& img, const geo::Triangle& T, int value) {
 	geo::drawLineMat(img, geo::Line(T.P1, T.P2), value);
 	geo::drawLineMat(img, geo::Line(T.P2, T.P3), value);
 	geo::drawLineMat(img, geo::Line(T.P3, T.P1), value);
+
+	return;
+}
+
+void geo::drawTriangle24bitMat(cv::Mat& img, const geo::Triangle& T, int value, int base) {
+	geo::drawLine24bitMat(img, geo::Line(T.P1, T.P2), value, base);
+	geo::drawLine24bitMat(img, geo::Line(T.P2, T.P3), value, base);
+	geo::drawLine24bitMat(img, geo::Line(T.P3, T.P1), value, base);
 
 	return;
 }
@@ -219,6 +282,17 @@ void geo::drawObjMat(cv::Mat& img, const geo::Obj &obj, int value) {
 #pragma omp parallel for
 	for (int i = 0; i < num; i++) {
 		geo::drawTriangleMat(img, obj.T[i], value);
+	}
+
+	return;
+}
+
+void geo::drawObj24bitMat(cv::Mat& img, const geo::Obj &obj, int value, int base) {
+	int num = obj.num;
+
+#pragma omp parallel for
+	for (int i = 0; i < num; i++) {
+		geo::drawTriangle24bitMat(img, obj.T[i], value, base);
 	}
 
 	return;

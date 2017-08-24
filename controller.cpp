@@ -11,6 +11,7 @@ void Leap_Listener::onConnect(const Leap::Controller& controller) {
 void Leap_Listener::onDisconnect(const Leap::Controller& controller) {
 	std::cout << "Disconnected" << std::endl;
 }
+
 void Leap_Listener::onFrame(const Leap::Controller& controller) {
 	 Leap::Frame frame = controller.frame();
 	Leap::Hand hand = frame.hands()[0];

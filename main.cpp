@@ -56,26 +56,26 @@ int main() {
 
 	geo::Hand i_hand;
 	geo::Hand d_hand;
+	clock_t _clock = clock();
 	while (true) {
 		i_hand = e_hand;
 		d_hand = i_hand;
+
 		double matHand[3][3] = { { cos(angle * Deg2Rad), 0, sin(angle * Deg2Rad) },
 								{ 0, 1, 0 },
 								{ -sin(angle * Deg2Rad), 0, cos(angle * Deg2Rad) } };
-		d_hand.rotate(matHand);
 
+		clock_t __clock = clock();
+
+		//d_hand.rotate(matHand);
 		objlist.rotateObjList(maty);
-		objlist.drawObjListMat(img, 255);
-		geo::drawHandMat(img, d_hand, 255);
 
-		//imshow("testImage", img);
-		//waitKey(1000 / 1000);
+		//cout << "rotate time : " << clock() - __clock << endl;
 
-		objlist.drawObjListMat(img, 0);
-		geo::drawHandMat(img, d_hand, 0);
-		
+		clock_t ___clock = clock(); 
+		//std::cout << !(GetKeyState('B') == 0 || GetKeyState('B') == 1) << " ";
 		if (controller.frame().hands()[0].isValid() == true) {
-			if (geo::isFingerTouched(i_hand)) {
+			if (!(GetKeyState('B') == 0 || GetKeyState('B') == 1)) {
 
 				geo::Point temp = geo::getFingerCoord(i_hand);
 				geo::Obj* tempobj = geo::SearchObjRelativePoint(objlist, temp);
@@ -95,10 +95,24 @@ int main() {
 		else {
 			obj = NULL;
 		}
+		//std::cout << clock() - ___clock << " ";
+				
+		__clock = clock();
+		objlist.drawObjListMat(img, 255);
+		geo::drawHandMat(img, d_hand, 255);
 
+		//cout << "draw time : " << clock() - __clock << endl;
+
+		imshow("testImage", img);
+		waitKey(1000 / 1000);
+
+		objlist.drawObjListMat(img, 0);
+		geo::drawHandMat(img, d_hand, 0);
+		
 		angle = angle + 3;
 		if (angle == 360) {
-			printf("%d\n", clock());
+			printf("%d\n", clock() - _clock);
+			_clock = clock();
 			cout << geo::distPoint(i_hand.fingertip[0], i_hand.fingertip[1]) << endl;
 			angle = 0;
 		}

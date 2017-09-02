@@ -10,6 +10,7 @@
 #include <cstring>
 #include <cassert>
 #include <WinUser.h>
+#include <chrono>
 #include "opencv2/opencv.hpp"
 #include "opencv2/core/core.hpp"
 #include "opencv2/highgui/highgui.hpp"
@@ -82,6 +83,7 @@ namespace geo {
 		{ }
 		void add(geo::Obj* obj);
 		void drawObjListMat(cv::Mat& img, int value);
+		void drawObjList24bitMat(cv::Mat& img, int value, int base);
 		void rotateObjList(double Mat[][3]);
 	};
 

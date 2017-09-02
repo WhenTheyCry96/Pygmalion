@@ -29,6 +29,15 @@ void geo::ObjList::drawObjListMat(cv::Mat& img, int value) {
 	return;
 }
 
+void geo::ObjList::drawObjList24bitMat(cv::Mat& img, int value, int base) {
+	geo::Obj* tempobj = head;
+	while (tempobj != NULL) {
+		geo::drawObj24bitMat(img, *tempobj, value, base);
+		tempobj = tempobj->next;
+	}
+	return;
+}
+
 void geo::ObjList::rotateObjList(double Mat[][3]) {
 	geo::Obj* tempobj = head;
 	while (tempobj != NULL) {
@@ -68,18 +77,29 @@ void geo::dotMat(cv::Mat& img, int x, int y, int value) {
 	return;
 }
 
+//void geo::dot24bitMat(cv::Mat& img, int x, int y, int value, int base) {
+//	int _x = x + WIDTH / 2;
+//	int _y = y + HEIGHT / 2;
+//	int index = _x + _y * WIDTH;
+//	int indextr = index / 24 + base * WIDTH * HEIGHT / 24;
+//	int __y = indextr / WIDTH;
+//	int __x = indextr % WIDTH;
+//	int subIndex = index % 24;
+//	int RGB = subIndex / 8;
+//	int RGBIndex = subIndex % 8;
+//	if (_x >= 0 && _x < WIDTH && _y >= 0 && _y < HEIGHT) {
+//		img.at<cv::Vec3b>(cv::Point(__x, HEIGHT - __y - 1))[RGB] = value << RGBIndex;
+//	}
+//	return;
+//}
+
 void geo::dot24bitMat(cv::Mat& img, int x, int y, int value, int base) {
 	int _x = x + WIDTH / 2;
 	int _y = y + HEIGHT / 2;
-	int index = _x + _y * WIDTH;
-	int indextr = index / 24 + base * WIDTH * HEIGHT / 24;
-	int __y = indextr / WIDTH;
-	int __x = indextr % WIDTH;
-	int subIndex = index % 24;
-	int RGB = subIndex / 8;
-	int RGBIndex = subIndex % 8;
+	int RGB = base / 8;
+	int RGBIndex = base % 8;
 	if (_x >= 0 && _x < WIDTH && _y >= 0 && _y < HEIGHT) {
-		img.at<cv::Vec3b>(cv::Point(__x, HEIGHT - __y - 1))[RGB] = value << RGBIndex;
+		img.at<cv::Vec3b>(cv::Point(_x, HEIGHT - _y - 1))[RGB] = img.at<cv::Vec3b>(cv::Point(_x, HEIGHT - _y - 1))[RGB] | value << RGBIndex;
 	}
 	return;
 }

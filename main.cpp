@@ -19,10 +19,10 @@ int main() {
 
 	geo::ObjList objlist;
 
-	string filename("testcube.stl");
+	string filename("cube.stl");
 	geo::Obj* obj;
 	unsigned int trigleNum;
-	double extension = 1;
+	double extension = 2;
 	obj = parseSTL2Obj(filename, trigleNum, extension);
 
 	objlist.add(obj);
@@ -41,8 +41,13 @@ int main() {
 						{ -sin(degy * Deg2Rad), 0, cos(degy * Deg2Rad) } };
 
 	Mat img;
-	img = Mat(WIDTH, HEIGHT, CV_8UC1, Scalar(0));
-	namedWindow("testImage");
+	Mat test;
+	img = Mat(WIDTH, HEIGHT, CV_8UC3, Scalar(0));
+	test = Mat(WIDTH, HEIGHT, CV_8UC1, Scalar(0));
+
+	cvNamedWindow("testImage", CV_WINDOW_NORMAL);
+	//cvSetWindowProperty("testImage", CV_WND_PROP_FULLSCREEN, CV_WINDOW_FULLSCREEN);
+
 	if (!img.data) {
 		cerr << "imread error" << endl;
 		assert(false);
@@ -56,7 +61,8 @@ int main() {
 
 	geo::Hand i_hand;
 	geo::Hand d_hand;
-	clock_t _clock = clock();
+	std::chrono::system_clock::time_point start = std::chrono::system_clock::now();
+	clock_t bclock = clock();
 	while (true) {
 		i_hand = e_hand;
 		d_hand = i_hand;
@@ -98,22 +104,46 @@ int main() {
 		//std::cout << clock() - ___clock << " ";
 				
 		__clock = clock();
-		objlist.drawObjListMat(img, 255);
-		geo::drawHandMat(img, d_hand, 255);
+		//if ((angle / 3) % 24 == 1) {
+			objlist.drawObjList24bitMat(img, 1, (angle / 3) % 24);
+		//}
+		//geo::drawHandMat(img, d_hand, 255);
 
 		//cout << "draw time : " << clock() - __clock << endl;
 
-		imshow("testImage", img);
-		waitKey(1000 / 1000);
+		if ((angle / 3) % 24 == 23) {
+			//while((std::chrono::system_clock::now() - start) < 330000){}
+			Sleep(1000 - (clock() - bclock));
+			bclock = clock();
+			imshow("testImage", img);
+			waitKey(1);
+			printf("%d\n", std::chrono::system_clock::now() - start);
+			start = std::chrono::system_clock::now();
 
-		objlist.drawObjListMat(img, 0);
-		geo::drawHandMat(img, d_hand, 0);
+
+//#pragma omp parallel for
+//			for (int i = 0; i < WIDTH; i++) {
+//				for (int j = 0; j < HEIGHT; j++) {
+//					test.at<unsigned char>(i, j) = (((int)(img.at<cv::Vec3b>(i, j)[0]) >> 1) & 1) * 255;
+//					//std::cout << (((int)(img.at<cv::Vec3b>(i, j)[0]) >> 2) & 1);
+//				}
+//			}
+#pragma omp parallel for
+			for (int i = 0; i < WIDTH; i++) {
+				for (int j = 0; j < HEIGHT; j++) {
+					img.at<cv::Vec3b>(i, j) = cv::Vec3b(0, 0, 0);
+				}
+			}
+			/*imshow("testImage", test);
+			waitKey(1);*/
+		}
+
+		//objlist.drawObjListMat(img, 0);
+		//geo::drawHandMat(img, d_hand, 0);
 		
 		angle = angle + 3;
 		if (angle == 360) {
-			printf("%d\n", clock() - _clock);
-			_clock = clock();
-			cout << geo::distPoint(i_hand.fingertip[0], i_hand.fingertip[1]) << endl;
+			//cout << geo::distPoint(i_hand.fingertip[0], i_hand.fingertip[1]) << endl;
 			angle = 0;
 		}
 	}

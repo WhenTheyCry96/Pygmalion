@@ -13,7 +13,7 @@ geo::Point parsePoint(std::ifstream& file) {
 	float x = parseFloat(file);
 	float y = parseFloat(file);
 	float z = parseFloat(file);
-	return geo::Point((double)x, (double)y, (double)z);
+	return geo::Point((double)y, (double)-x, (double)z);
 }
 
 geo::Line* parseSTL2Line(const string filename, unsigned int& _num, double extension) {

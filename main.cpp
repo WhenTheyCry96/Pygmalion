@@ -10,6 +10,7 @@ using namespace std;
 GLbyte data[HEIGHT * WIDTH];
 
 geo::Hand e_hand;
+int flag = 0;
 
 int main() {
 	omp_set_num_threads(4);
@@ -33,6 +34,7 @@ int main() {
 	double matx[3][3] = { { 1, 0, 0 },
 						{ 0, cos(degx * Deg2Rad), -sin(degx * Deg2Rad) },
 						{ 0, sin(degx * Deg2Rad), cos(degx * Deg2Rad) } };
+
 	double matz[3][3] = { { cos(degz * Deg2Rad), -sin(degz * Deg2Rad), 0 },
 						{ sin(degz * Deg2Rad),  cos(degz * Deg2Rad), 0 },
 						{ 0, 0, 1 } };
@@ -64,6 +66,9 @@ int main() {
 	geo::Hand d_hand;
 	std::chrono::system_clock::time_point start = std::chrono::system_clock::now();
 	clock_t bclock = clock();
+
+	double angletest = 0;
+	geo::Point prevp;
 	while (true) {
 		double matz[3][3] = { { cos(angle * Deg2Rad), -sin(angle * Deg2Rad), 0 },
 							{ sin(angle * Deg2Rad),  cos(angle * Deg2Rad), 0 },
@@ -72,6 +77,13 @@ int main() {
 		double matzrev[3][3] = { { cos(-angle * Deg2Rad), -sin(-angle * Deg2Rad), 0 },
 							{ sin(-angle * Deg2Rad),  cos(-angle * Deg2Rad), 0 },
 							{ 0, 0, 1 } };
+
+		double matztest[3][3] = { { cos(angletest * Deg2Rad), -sin(angletest * Deg2Rad), 0 },
+								{ sin(angletest * Deg2Rad),  cos(angletest * Deg2Rad), 0 },
+								{ 0, 0, 1 } };
+		double matytest[3][3] = { { cos(angletest * Deg2Rad), 0, sin(angletest * Deg2Rad) },
+							{ 0, 1, 0 },
+							{ -sin(angletest * Deg2Rad), 0, cos(angletest * Deg2Rad) } };
 
 		i_hand = e_hand;
 		d_hand = i_hand;
@@ -83,32 +95,27 @@ int main() {
 		clock_t __clock = clock();
 
 		//d_hand.rotate(matHand);
-		objlist.rotateObjList(maty);
-		////objlist.rotateObjList(matz);
-		//cout << "rotate time : " << clock() - __clock << endl;
+		//if(flag == 0) objlist.rotateObjList(matztest);
+		//if(flag == 0) objlist.rotateObjList(matytest);
+		objlist.rotateinPlaceObjList(matztest);
 
 		clock_t ___clock = clock(); 
-		//std::cout << !(GetKeyState('B') == 0 || GetKeyState('B') == 1) << " ";
 		if (controller.frame().hands()[0].isValid() == true) {
-			if (!(GetKeyState('B') == 0 || GetKeyState('B') == 1)) {
-
-				geo::Point temp = geo::getFingerCoord(i_hand);
-				geo::Obj* tempobj = geo::SearchObjRelativePoint(objlist, temp);
-				if (tempobj != NULL && obj != NULL) {
-					double mat[3] = { (temp.x - prevLeapFinger.x) * cos(Deg2Rad * angle), temp.y - prevLeapFinger.y, (temp.z - prevLeapFinger.z) * sin(Deg2Rad * angle) };
-					geo::transformObj(*obj, mat);
+			if ((GetKeyState('B') == 0 || GetKeyState('B') == 1)) {
+				if (flag == 0) {
+					prevp = geo::getFingerCoord(i_hand);
+					flag = 1;
 				}
 				else {
-					obj = tempobj;
+					geo::Point p = geo::getFingerCoord(i_hand);
+					double mat[3] = {p.x - prevp.x, p.y - prevp.y, p.z - prevp.z};
+					geo::transformObj(*obj, mat);
+					prevp = p;
 				}
-				prevLeapFinger = temp;
-			}
-			else {
-				obj = NULL;
 			}
 		}
 		else {
-			obj = NULL;
+			flag = 0;
 		}
 		//std::cout << clock() - ___clock << " ";
 				
@@ -119,9 +126,18 @@ int main() {
 		//geo::drawHandMat(img, d_hand, 255);
 
 		//cout << "draw time : " << clock() - __clock << endl;
+		double matztestrev[3][3] = { { cos(-angletest * Deg2Rad), -sin(-angletest * Deg2Rad), 0 },
+									{ sin(-angletest * Deg2Rad),  cos(-angletest * Deg2Rad), 0 },
+									{ 0, 0, 1 } };
+		double matytestrev[3][3] = { { cos(-angletest * Deg2Rad), 0, sin(-angletest * Deg2Rad) },
+								{ 0, 1, 0 },
+								{ -sin(-angletest * Deg2Rad), 0, cos(-angletest * Deg2Rad) } };
+
+		//if(flag == 0) objlist.rotateObjList(matytestrev);
+		//if(flag == 0) objlist.rotateObjList(matztestrev);
+		objlist.rotateinPlaceObjList(matztestrev);
 
 		if (((int)angle / 3) % 24 == 23) {
-			//while((std::chrono::system_clock::now() - start) < 330000){}
 			int time = 170;
 			if (time - (clock() - bclock) < 0) {}
 			else {
@@ -134,31 +150,18 @@ int main() {
 			imshow("testImage", img);
 			waitKey(1);
 
-//#pragma omp parallel for
-//			for (int i = 0; i < WIDTH; i++) {
-//				for (int j = 0; j < HEIGHT; j++) {
-//					test.at<unsigned char>(i, j) = (((int)(img.at<cv::Vec3b>(i, j)[0]) >> 1) & 1) * 255;
-//					//std::cout << (((int)(img.at<cv::Vec3b>(i, j)[0]) >> 2) & 1);
-//				}
-//			}
 #pragma omp parallel for
 			for (int i = 0; i < WIDTH; i++) {
 				for (int j = 0; j < HEIGHT; j++) {
 					img.at<cv::Vec3b>(i, j) = cv::Vec3b(0, 0, 0);
 				}
 			}
-			/*imshow("testImage", test);
-			waitKey(1);*/
 		}
-
-		//objlist.drawObjListMat(img, 0);
-		//geo::drawHandMat(img, d_hand, 0);
-		////objlist.rotateObjList(matzrev);
 		angle = angle + 3;
 		if (angle == 360) {
-			//cout << geo::distPoint(i_hand.fingertip[0], i_hand.fingertip[1]) << endl;
 			angle = 0;
 		}
+		angletest += 0.1;
 	}
 
 	getch();

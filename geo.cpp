@@ -8,6 +8,34 @@ void geo::Point::extenPoint(double extension) {
 	return;
 }
 
+void geo::Obj::setCenter() {
+	center.x = 0;
+	center.y = 0;
+	center.z = 0;
+
+	for (int i = 0; i < num; i++) {
+		center.x += T[i].P1.x;
+		center.x += T[i].P2.x;
+		center.x += T[i].P3.x;
+
+		center.y += T[i].P1.y;
+		center.y += T[i].P2.y;
+		center.y += T[i].P3.y;
+
+		center.z += T[i].P1.z;
+		center.z += T[i].P2.z;
+		center.z += T[i].P3.z;
+
+	}
+
+	//std::cout << "center: " << center.x << " " << center.y << " " << center.z << std::endl;
+	center.x = (center.x / num) / 3;
+	center.y = (center.y / num) / 3;
+	center.z = (center.z / num) / 3;
+
+	//std::cout << "center: " << center.x << " " << center.y << " " << center.z << std::endl;
+}
+
 void geo::ObjList::add(geo::Obj* obj) {
 	if (head == NULL) {
 		head = obj;
@@ -42,6 +70,22 @@ void geo::ObjList::rotateObjList(double Mat[][3]) {
 	geo::Obj* tempobj = head;
 	while (tempobj != NULL) {
 		geo::rotateObj(*tempobj, Mat);
+		tempobj = tempobj->next;
+	}
+	return;
+}
+
+void geo::ObjList::rotateinPlaceObjList(double Mat[][3]) {
+	geo::Obj* tempobj = head;
+	while (tempobj != NULL) {
+		tempobj->setCenter();
+		double mat[3] = {-tempobj->center.x, -tempobj->center.y, -tempobj->center.z};
+		geo::transformObj(*tempobj, mat);
+		geo::rotateObj(*tempobj, Mat);
+
+		double matrev[3] = { tempobj->center.x, tempobj->center.y, tempobj->center.z };
+		geo::transformObj(*tempobj, matrev);
+
 		tempobj = tempobj->next;
 	}
 	return;

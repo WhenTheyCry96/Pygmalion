@@ -68,10 +68,14 @@ namespace geo {
 	public:
 		geo::Triangle* T;
 		geo::Obj* next;
+		geo::Point center;
 		int num;
-		Obj():
+
+		Obj() :
 			T(NULL), num(0), next(NULL)
 		{ }
+
+		void setCenter();
 	};
 
 	class ObjList {
@@ -85,6 +89,7 @@ namespace geo {
 		void drawObjListMat(cv::Mat& img, int value);
 		void drawObjList24bitMat(cv::Mat& img, int value, int base);
 		void rotateObjList(double Mat[][3]);
+		void rotateinPlaceObjList(double Mat[][3]);
 	};
 
 	class Hand {

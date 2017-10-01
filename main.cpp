@@ -20,10 +20,10 @@ int main() {
 
 	geo::ObjList objlist;
 
-	string filename("face500.stl");
+	string filename("cube.stl");
 	geo::Obj* obj;
 	unsigned int trigleNum;
-	double extension = 0.02;
+	double extension = 1;
 	obj = parseSTL2Obj(filename, trigleNum, extension);
 
 	objlist.add(obj);
@@ -98,6 +98,7 @@ int main() {
 		//if(flag == 0) objlist.rotateObjList(matztest);
 		//if(flag == 0) objlist.rotateObjList(matytest);
 		objlist.rotateinPlaceObjList(matztest);
+		objlist.rotateinPlaceObjList(matytest);
 
 		clock_t ___clock = clock(); 
 		if (controller.frame().hands()[0].isValid() == true) {
@@ -120,9 +121,12 @@ int main() {
 		//std::cout << clock() - ___clock << " ";
 				
 		__clock = clock();
-		//if ((angle / 3) % 24 == 1) {
-			objlist.drawObjList24bitMat(img, 1, ((int)angle / 3) % 24);
-		//}
+		if ((int)(angle / 3) % 24 == 0) {
+			////objlist.drawObjList24bitMat(img, 1, ((int)angle / 3) % 24);
+			for(int i = 0; i < 24; i++)
+				objlist.drawObjList24bitMat(img, 1, i);
+
+		}
 		//geo::drawHandMat(img, d_hand, 255);
 
 		//cout << "draw time : " << clock() - __clock << endl;
@@ -161,7 +165,7 @@ int main() {
 		if (angle == 360) {
 			angle = 0;
 		}
-		angletest += 0.1;
+		angletest += 0.9;
 	}
 
 	getch();
